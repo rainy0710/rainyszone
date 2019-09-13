@@ -1,0 +1,18 @@
+{
+  "name": "xiaosheng",
+  "version": "1.0.0",
+  "description": "This is a project named \"Xiao Sheng\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "dev": "node node_modules\\webpack\\bin\\webpack"
+  },
+  "author": "Rainix Zhang",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.15",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8"
+  }
+}
