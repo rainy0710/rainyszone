@@ -1,0 +1,52 @@
+<template>
+  <div class="box">
+    <index-poster></index-poster>
+    <head-bar></head-bar>
+    <body-content></body-content>
+  </div>
+</template>
+<script>
+// 组件
+import indexPoster from "./web/index-poster.vue";
+import headBar from "./web/head-bar.vue";
+import bodyContent from "./web/body-content.vue";
+
+export default {
+  components: {
+    indexPoster,
+    headBar,
+    bodyContent
+  }
+};
+</script>
+<style>
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+</style>

@@ -2,8 +2,10 @@
 <html>
 
 <head>
-  <title>晓声 —— 个人博客</title>
+  <title>小雨宙 —— Personal Blog</title>
   <meta charset="utf-8" />
+  <!-- 加入页面图标 -->
+  <link rel="shortcut icon" href="/public/images/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
@@ -24,11 +26,19 @@
 
     // 创建容器标签：PC——div#web APP——div#app
     let container = document.createElement('div');
-    container.id = isPC() ? 'web' : 'app';
+    let jsElement = document.createElement('script');
+    jsElement.type = 'text/javascript';
+    if (!isPC()) {
+      container.id = 'app';
+      jsElement.src = '/dist/app.bundle.js';
+    } else {
+      container.id = 'web';
+      jsElement.src = '/dist/web.bundle.js';
+    }
 
     document.body.appendChild(container);
+    document.body.appendChild(jsElement);
   </script>
-  <script type="text/javascript" src="/dist/index.bundle.js"></script>
 </body>
 
 </html>
