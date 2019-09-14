@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node index.js",
-    "dev": "node node_modules\\webpack\\bin\\webpack"
+    "build": "node node_modules\\webpack\\bin\\webpack"
   },
   "author": "Rainix Zhang",
   "license": "ISC",
