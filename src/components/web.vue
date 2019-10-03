@@ -1,21 +1,19 @@
 <template>
-  <div class="box">
-    <index-poster></index-poster>
+  <div class="out-box">
     <head-bar></head-bar>
-    <body-content></body-content>
+    <router-view></router-view>
+    <foot-info></foot-info>
   </div>
 </template>
 <script>
 // 组件
-import indexPoster from "./web/index-poster.vue";
 import headBar from "./web/head-bar.vue";
-import bodyContent from "./web/body-content.vue";
+import footInfo from "./web/foot-info.vue";
 
 export default {
   components: {
-    indexPoster,
     headBar,
-    bodyContent
+    footInfo
   }
 };
 </script>
@@ -48,5 +46,14 @@ td {
   margin: 0;
   padding: 0;
   border: none;
+}
+
+body {
+  background-color: #eee;
+}
+
+div.out-box {
+  width: 80%;
+  margin: 0 auto;
 }
 </style>

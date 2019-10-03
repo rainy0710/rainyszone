@@ -5,7 +5,7 @@ const fs = require('fs');
 // 创建HTTP服务器
 const app = express();
 
-// 设置静态资源目录(该目录下文件可直接)
+// 设置静态资源目录(该目录下文件可直接访问)
 app.use(express.static(__dirname + '/src/entry'));
 
 // 媒体资源请求

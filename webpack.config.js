@@ -39,6 +39,11 @@ module.exports = {
     // Vue-loader在v15.*之后版本使用时都需要引入vue-loader-plugin的插件
     new VueLoaderPlugin()
   ],
+  // resolve: {
+  //   alias: {
+  //     'vue-router$': 'vue-router/dist/vue-router.js'
+  //   }
+  // }
   // optimization: {
   //   splitChunks: {
   //     chunks: 'all'
