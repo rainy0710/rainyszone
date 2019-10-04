@@ -89,6 +89,7 @@ table tr th {
 }
 
 table tr td {
+  padding-left: 5px;
   font-size: 14px;
 }
 

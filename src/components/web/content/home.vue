@@ -59,7 +59,7 @@ export default {
 
         // 更新盒子的高度
         this.contentHeight =
-          400 * Math.floor(+this.cards.length / this.numInLine) + 350;
+          400 * Math.ceil(+this.cards.length / this.numInLine) - 50;
 
         // 再次绑定尺寸调整侦听事件
         window.addEventListener("resize", this.resizeEvent);
@@ -101,6 +101,7 @@ div.content div.card {
   background-color: #ddd;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.5s ease;
   overflow: hidden;
 }
 
