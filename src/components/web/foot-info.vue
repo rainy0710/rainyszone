@@ -51,4 +51,8 @@ div.contact {
   color: #666;
   line-height: 28px;
 }
+
+div.contact p.title {
+  font-weight: bold;
+}
 </style>
