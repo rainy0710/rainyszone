@@ -1,6 +1,7 @@
 <template>
   <div class="box" ref="content" :style="{height: lineHeight + 'px'}">
-    <div
+    <a
+      :href="'/movie.html?title=' + item.title"
       class="card"
       v-for="(item, index) in movie"
       :key="index"
@@ -12,12 +13,12 @@
       ></div>
       <div class="info">
         <p class="title">{{ item.title }}</p>
-        <p class="year">年代：{{ item.time }}</p>
+        <p class="time">年代：{{ item.time }}</p>
         <p class="director">导演：{{ item.director }}</p>
         <p class="type">类型：{{ item.type }}</p>
         <p class="description">描述：{{ item.description }}</p>
       </div>
-    </div>
+    </a>
   </div>
 </template>
 <script>
@@ -28,7 +29,7 @@ export default {
         {
           category: ["随笔", "音乐", "电影", "文章"][2],
           title: "说好不哭",
-          picture: "/public/images/poster/说好不哭.jpg",
+          picture: "/public/poster/movie/说好不哭.jpg",
           description:
             "这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english",
           time: 2019,
@@ -76,7 +77,8 @@ div.box {
   position: relative;
 }
 
-div.card {
+a.card {
+  display: block;
   position: absolute;
   width: 400px;
   height: 300px;
@@ -84,18 +86,18 @@ div.card {
   transition: all 0.5s ease;
 }
 
-div.card:hover {
+a.card:hover {
   box-shadow: 0 0 10px #888;
 }
 
-div.card div.poster {
+a.card div.poster {
   float: left;
   margin: 10px;
   width: 180px;
   height: 280px;
 }
 
-div.card div.info {
+a.card div.info {
   float: right;
   width: 200px;
   height: 280px;
@@ -110,7 +112,7 @@ div.card div.info {
   user-select: none;
 }
 
-div.card div.info p.title {
+a.card div.info p.title {
   width: 100%;
   height: 50px;
   line-height: 50px;
@@ -119,7 +121,7 @@ div.card div.info p.title {
   color: #222;
 }
 
-div.card div.info p.year,
+a.card div.info p.time,
 p.director,
 p.type {
   width: 100%;
@@ -130,7 +132,7 @@ p.type {
   color: #444;
 }
 
-div.card div.info p.description {
+a.card div.info p.description {
   width: 100%;
   height: 150px;
   line-height: 25px;

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{ title }} —— 电影分享</title>
+  <meta charset="utf-8" />
+  <!-- 加入页面图标 -->
+  <link rel="shortcut icon" href="/public/images/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+  <script>
+    // 判断渲染的设别类型是否为PC
+    function isPC() {
+      let userAgentInfo = navigator.userAgent;
+      let Agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+      let flag = true;
+      for (let v = 0; v < Agents.length; v++) {
+        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+          flag = false;
+          break;
+        }
+      }
+      return flag;
+    }
+
+    // 创建容器标签：PC——div#web APP——div#app
+    let container = document.createElement('div');
+    let jsElement = document.createElement('script');
+    jsElement.type = 'text/javascript';
+    if (!isPC()) {
+      jsElement.src = '/dist/movie-app.bundle.js';
+    } else {
+
+      jsElement.src = '/dist/movie-web.bundle.js';
+    }
+
+    container.id = 'movie';
+    document.body.appendChild(container);
+    document.body.appendChild(jsElement);
+  </script>
+</body>
+
+</html>
