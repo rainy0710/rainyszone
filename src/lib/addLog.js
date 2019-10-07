@@ -15,7 +15,7 @@ module.exports = function addLog(request, type) {
   // 获取访问的具体时间
   let logDate = new Date();
   // 根据日期区分文件
-  let logFile = new Date().getFullYear().toString().concat((logDate.getMonth() + 1), logDate.getDate());
+  let logFile = logDate.getFullYear().toString().concat((logDate.getMonth() + 1), logDate.getDate());
   switch (type) {
     case 2:
       // 访问电影页面的记录
