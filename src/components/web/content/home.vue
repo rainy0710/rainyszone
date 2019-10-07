@@ -1,12 +1,12 @@
 <template>
   <div class="box">
     <div class="poster"></div>
-    <div class="content" :style="{height: contentHeight + 'px'}" ref="content">
+    <div class="content" :style="{ height: contentHeight + 'px' }" ref="content">
       <div
         class="card"
         v-for="(item, index) in dataList"
         :key="index"
-        :style="{left: 315 * (index % numInLine) + 'px', top: 400 * Math.floor(index / numInLine) + 'px'}"
+        :style="{ left: 315 * (index % numInLine) + 'px', top: 400 * Math.floor(index / numInLine) + 'px' }"
         @click="clickEvent(item.category, item.title)"
       >
         <div
@@ -42,7 +42,7 @@ export default {
     };
   },
   methods: {
-    // 通过DOM2级事件加上动态绑定来降低事件触发频率
+    // 当窗口尺寸变化时调整页面卡片排布
     resizeEvent: function() {
       window.removeEventListener("resize", this.resizeEvent);
 

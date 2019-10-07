@@ -1,11 +1,11 @@
 <template>
   <div class="box" ref="content" :style="{height: lineHeight + 'px'}">
-    <a
-      :href="'/movie.html?title=' + item.title"
+    <div
       class="card"
-      v-for="(item, index) in movie"
+      v-for="(item, index) in dataList"
       :key="index"
       :style="{left: index % numInLine * 400 + 'px', top: parseInt(index / numInLine) * 300 + 'px' }"
+      @click="clickEvent(item.title)"
     >
       <div
         class="poster"
@@ -13,36 +13,22 @@
       ></div>
       <div class="info">
         <p class="title">{{ item.title }}</p>
-        <p class="time">年代：{{ item.time }}</p>
+        <p class="time">年代：{{ new Date(item.time).getFullYear() }}</p>
         <p class="director">导演：{{ item.director }}</p>
-        <p class="type">类型：{{ item.type }}</p>
+        <p class="type">类型：{{ item.type.join('，') }}</p>
         <p class="description">描述：{{ item.description }}</p>
       </div>
-    </a>
+    </div>
   </div>
 </template>
 <script>
 export default {
   data: function() {
     return {
-      movie: [
-        {
-          category: ["随笔", "音乐", "电影", "文章"][2],
-          title: "说好不哭",
-          picture: "/public/poster/movie/说好不哭.jpg",
-          description:
-            "这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english",
-          time: 2019,
-          type: "MTV",
-          director: "周杰伦",
-          date: "10/2/2019",
-          url: "#"
-        }
-      ],
-      // 每行卡片数量
-      numInLine: 3,
-      // 盒子的高度
-      lineHeight: 600
+      dataList: [],
+      numInLine: 3, // 每行卡片数量
+      lineHeight: 600, // 盒子的高度
+      pageAmount: 20 // 每次拉取数据的数量
     };
   },
   methods: {
@@ -56,19 +42,68 @@ export default {
 
         // 更新盒子的高度
         this.lineHeight =
-          this.movie.length > this.numInLine
-            ? 300 * Math.ceil(this.movie.length / this.numInLine)
+          this.dataList.length > this.numInLine
+            ? 300 * Math.ceil(this.dataList.length / this.numInLine)
             : 600;
 
         // 再次绑定尺寸调整侦听事件
         window.addEventListener("resize", this.resizeEvent);
         clearTimeout(timer);
       }, 200);
+    },
+    // 获取dataList数据
+    getData: function() {
+      window.ajax(
+        "GET",
+        "/query/movie",
+        {
+          offset: this.dataList.length,
+          amount: this.pageAmount // 每次获取的数据数量
+        },
+        xmlHttp => {
+          // 当拉取的数据不足时便取消滚动拉去数据
+          if (JSON.parse(xmlHttp.responseText).length < this.pageAmount) {
+            window.removeEventListener("scroll", this.scrollEvent);
+          }
+          // 将新获取的数据拼接在原有数据之后
+          this.dataList = this.dataList.concat(
+            JSON.parse(xmlHttp.responseText)
+          );
+          // 绑定尺寸调整侦听事件
+          this.resizeEvent();
+        },
+        xmlHttp => {
+          console.error("Query for home list failed!");
+        }
+      );
+    },
+    // 卡片点击的事件驱动函数，参数为：资源的title值
+    clickEvent(title) {
+      window.location.href =
+        window.location.origin + "/movie.html?title=" + title;
+    },
+    // 当滚动至盒子底部时拉取dataList数据
+    scrollEvent: function() {
+      window.removeEventListener("scroll", this.scrollEvent);
+
+      let timer = setTimeout(() => {
+        if (
+          this.$refs.content.offsetTop + this.$refs.content.clientHeight <=
+          (document.documentElement.scrollTop ||
+            window.pageYOffset ||
+            document.body.scrollTop) +
+            window.innerHeight
+        ) {
+          this.getData();
+        }
+        window.addEventListener("scroll", this.scrollEvent);
+      }, 300);
     }
   },
   mounted: function() {
-    // 根据获取的电影数量调整盒子高度和布局
-    this.resizeEvent();
+    // 初始化dataList
+    this.getData();
+    window.addEventListener("scroll", this.scrollEvent);
   }
 };
 </script>
@@ -77,7 +112,7 @@ div.box {
   position: relative;
 }
 
-a.card {
+div.card {
   display: block;
   position: absolute;
   width: 400px;
@@ -86,18 +121,18 @@ a.card {
   transition: all 0.5s ease;
 }
 
-a.card:hover {
+div.card:hover {
   box-shadow: 0 0 10px #888;
 }
 
-a.card div.poster {
+div.card div.poster {
   float: left;
   margin: 10px;
   width: 180px;
   height: 280px;
 }
 
-a.card div.info {
+div.card div.info {
   float: right;
   width: 200px;
   height: 280px;
@@ -112,7 +147,7 @@ a.card div.info {
   user-select: none;
 }
 
-a.card div.info p.title {
+div.card div.info p.title {
   width: 100%;
   height: 50px;
   line-height: 50px;
@@ -121,7 +156,7 @@ a.card div.info p.title {
   color: #222;
 }
 
-a.card div.info p.time,
+div.card div.info p.time,
 p.director,
 p.type {
   width: 100%;
@@ -132,7 +167,7 @@ p.type {
   color: #444;
 }
 
-a.card div.info p.description {
+div.card div.info p.description {
   width: 100%;
   height: 150px;
   line-height: 25px;

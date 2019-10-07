@@ -3,19 +3,19 @@
     <div
       class="img"
       ref="imgBox"
-      :style="{ background: '#222 url(\'/public/poster/movie/说好不哭\.jpg\') center center no-repeat', 'background-size': 'contain'}"
+      :style="{ background: '#222 url(\'' + dataObj.picture + '\') center center no-repeat', 'background-size': 'contain'}"
     ></div>
     <div class="title" ref="titleBox">
-      <span>{{ title }}</span>
-      <span>{{ rate }}</span>
+      <span>{{ dataObj.title }}</span>
+      <span>{{ dataObj.rate }}</span>
     </div>
     <div class="scroll">
       <div class="content">
         <!-- 通过controlslist属性隐藏视频标签的下载按钮 -->
-        <video src="/public/video/说好不哭-周杰伦(1080p).mp4" controls controlslist="nodownload"></video>
-        <p class="title">{{ title }} ({{ time }})</p>
+        <video :src="dataObj.url" controls controlslist="nodownload"></video>
+        <p class="title">{{ dataObj.title }} ({{ time }})</p>
         <p class="detail">
-          导演：{{ director }}
+          导演：{{ dataObj.director }}
           <br />
           上映时间：{{ time }}
           <br />
@@ -23,7 +23,7 @@
           <br />
           地区：{{ region }}
           <br />
-          简介：{{ description }}
+          简介：{{ dataObj.description }}
         </p>
         <p class="notice">* 特别声明：本资源仅供学习和交流，请勿用于任何商业用途，如有侵权，还望提前告知下架，谢谢：rainy0710@qq.com</p>
       </div>
@@ -32,10 +32,15 @@
 </template>
 <script>
 export default {
-  data: function() {},
+  data: function() {
+    return {
+      dataObj: {},
+      type: "", // 影片类型
+      region: "", // 所属地区
+      time: "" // 上映时间
+    };
+  },
   methods: {
-    // 根据页面标题title请求电影的相关数据
-    getMovieInfo: function() {},
     // 窗口尺寸调节事件驱动函数
     windowResize: function() {
       window.removeEventListener("resize", this.windowResize);
@@ -77,6 +82,26 @@ export default {
         clearTimeout(timer);
       }, 100);
     }
+  },
+  created: function() {
+    let title = /(.*) —— 电影分享/.exec(document.title)[1];
+    // 初始化页面数据
+    window.ajax(
+      "GET",
+      "/query/movie",
+      {
+        title: title
+      },
+      xmlHttp => {
+        this.dataObj = JSON.parse(xmlHttp.responseText);
+        this.region = this.dataObj.region.join("，");
+        this.type = this.dataObj.type.join("，");
+        this.time = new Date(this.dataObj.time).getFullYear();
+      },
+      xmlHttp => {
+        window.location.href = window.location.origin + "/error.html";
+      }
+    );
   },
   mounted: function() {
     let windowHeight = window.innerHeight;

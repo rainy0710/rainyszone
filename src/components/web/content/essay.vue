@@ -1,12 +1,12 @@
 <template>
-  <div class="box" ref="box">
+  <div class="box" ref="content">
     <table>
       <tr>
         <th class="title">文章名</th>
         <th class="description">分享描述</th>
         <th class="date">分享时间</th>
       </tr>
-      <tr v-for="(item, index) in essay" :key="index">
+      <tr v-for="(item, index) in dataList" :key="index" @click="clickEvent(item.title)">
         <td>{{ item.title }}</td>
         <td>{{ item.description }}</td>
         <td>{{ item.date }}</td>
@@ -18,26 +18,68 @@
 export default {
   data: function() {
     return {
-      essay: [
-        {
-          category: ["随笔", "音乐", "电影", "文章"][3],
-          title: "假如生活欺骗了你",
-          picture: "/public/images/girl.jpg",
-          description:
-            "这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english",
-          date: "10/2/2019",
-          url: "#"
-        }
-      ]
+      dataList: [],
+      pageAmount: 20 // 每次拉取数据的数量
     };
   },
-  mounted: function() {
-    // 请求文章的essay数据
+  methods: {
+    // 获取dataList数据
+    getData: function() {
+      window.ajax(
+        "GET",
+        "/query/essay",
+        {
+          offset: this.dataList.length,
+          amount: this.pageAmount // 每次获取的数据数量
+        },
+        xmlHttp => {
+          // 当拉取的数据不足时便取消滚动拉去数据
+          if (JSON.parse(xmlHttp.responseText).length < this.pageAmount) {
+            window.removeEventListener("scroll", this.scrollEvent);
+          }
+          // 将新获取的数据拼接在原有数据之后
+          this.dataList = this.dataList.concat(
+            JSON.parse(xmlHttp.responseText)
+          );
+        },
+        xmlHttp => {
+          console.error("Query for essay list failed!");
+        }
+      );
+    },
+    // 卡片点击的事件驱动函数，参数为：资源的title值
+    clickEvent(title) {
+      window.location.href =
+        window.location.origin + "/essay.html?title=" + title;
+    },
+    // 当滚动至盒子底部时拉取dataList数据
+    scrollEvent: function() {
+      window.removeEventListener("scroll", this.scrollEvent);
 
-    // 若表格高度不够则手动添加高度
-    if (this.essay.length <= 15) {
-      this.$refs.box.style.height = "600px";
+      let timer = setTimeout(() => {
+        if (
+          this.$refs.content.offsetTop + this.$refs.content.clientHeight <=
+          (document.documentElement.scrollTop ||
+            window.pageYOffset ||
+            document.body.scrollTop) +
+            window.innerHeight
+        ) {
+          this.getData();
+        }
+        window.addEventListener("scroll", this.scrollEvent);
+      }, 300);
     }
+  },
+  created: function() {
+    // 初始化dataList数据
+    this.getData();
+    // 绑定滚动事件驱动函数
+    window.addEventListener("scroll", this.scrollEvent);
   }
 };
 </script>
+<style scoped>
+div.box {
+  min-height: 600px;
+}
+</style>
