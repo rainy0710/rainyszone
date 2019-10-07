@@ -4,7 +4,8 @@ const express = require('express');
 const dbObject = require('../../lib/dbObject.js');
 
 let router = express.Router();
-let database = new dbObject('rainyszone', 'reader:3721');
+let dbLicense = fs.readFileSync(path.join(__dirname, '../../../license'));
+let database = new dbObject('rainyszone', dbLicense);
 
 router.use((req, res) => {
   let category = req.path.slice(1);
