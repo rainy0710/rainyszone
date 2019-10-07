@@ -6,7 +6,7 @@
    ```json
    {
       category: 类型（0——随笔，1——音乐，2——电影，3——文章）,
-   title: 标题,
+      title: 标题,
       picture: 海报url,
       description: 推荐描述,
       date: 发布日期

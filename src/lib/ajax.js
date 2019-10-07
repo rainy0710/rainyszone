@@ -24,7 +24,7 @@ function robj2str(obj) {
 * 参数四：请求成功回调函数
 * 参数五：请求失败回调函数
 */
-function ajax(method, url, success, error, paraObj = {}, timeout = 3000) {
+function ajax(method, url, paraObj = {}, success, error, timeout = 3000) {
   let xmlhttp;
   if (window.XMLHttpRequest) {
     // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
@@ -49,11 +49,10 @@ function ajax(method, url, success, error, paraObj = {}, timeout = 3000) {
   // 修改参数格式
   paraStr = robj2str(paraObj);
 
-  // 对url进行处理，因为ajax会自动补全url开头的'/'，所以先去除双'/'开头的情况，然后再进行编码
+  // 对url进行处理，因为ajax会自动补全url开头的'/'，所以先去除双'/'开头的情况
   if (url.indexOf('/') === 0) {
     url = url.substring(1);
   }
-  url = encodeURIComponent(url);
 
   method = method.toUpperCase();
   if (method === 'GET') {

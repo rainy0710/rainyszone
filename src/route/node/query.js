@@ -28,6 +28,9 @@ router.use((req, res) => {
       res.end(JSON.stringify(data));
       return;
     })
+  } else {
+    console.error('Invalid query parameters:', req.query);
+    return;
   }
 });
 

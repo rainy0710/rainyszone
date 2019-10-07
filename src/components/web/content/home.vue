@@ -4,18 +4,22 @@
     <div class="content" :style="{height: contentHeight + 'px'}" ref="content">
       <div
         class="card"
-        v-for="(item, index) in cards"
+        v-for="(item, index) in dataList"
         :key="index"
         :style="{left: 315 * (index % numInLine) + 'px', top: 400 * Math.floor(index / numInLine) + 'px'}"
+        @click="clickEvent(item.category, item.title)"
       >
-        <div class="picture">
-          <img :src="item.picture" alt="图片获取失败 :(" />
-        </div>
+        <div
+          class="picture"
+          :style="{ 'background': '#ddd url(\'' + item.picture + '\') center center no-repeat', 'background-size': 'cover' }"
+        ></div>
         <div class="animation">
           <p class="title">{{ item.title }}</p>
           <div class="info">
-            <span class="category">{{ item.category }}</span>
-            <span class="date">{{ item.date }}</span>
+            <span class="category">{{ ['随笔', '音乐', '电影', '文章'][+item.category] }}</span>
+            <span
+              class="date"
+            >{{ [new Date(item.date).getDate(), new Date(item.date).getMonth() + 1, new Date(item.date).getFullYear()].join('/') }}</span>
           </div>
           <p class="description">{{ item.description }}</p>
         </div>
@@ -28,22 +32,13 @@ export default {
   data: function() {
     return {
       // 首页展示的卡片数据
-      cards: [
-        {
-          // category类型：0——随笔 1——音乐 2——电影 3——文章
-          category: ["随笔", "音乐", "电影", "文章"][0],
-          title: "小雨宙rainy哈哈哈哈哈哈哈哈哈",
-          picture: "/public/images/girl.jpg",
-          description:
-            "这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english这是关于该卡片的描述，可能不够长，所以说点废话hahaha try the english",
-          date: "10/2/2019",
-          url: "#"
-        }
-      ],
+      dataList: [],
       // 每一行展示的卡片数量
       numInLine: 4,
       // 卡片盒子的高度
-      contentHeight: 350
+      contentHeight: 350,
+      // 每次拉去的数据数量
+      pageAmount: 20
     };
   },
   methods: {
@@ -59,17 +54,74 @@ export default {
 
         // 更新盒子的高度
         this.contentHeight =
-          400 * Math.ceil(+this.cards.length / this.numInLine) - 50;
+          400 * Math.ceil(+this.dataList.length / this.numInLine) - 50;
 
         // 再次绑定尺寸调整侦听事件
         window.addEventListener("resize", this.resizeEvent);
         clearTimeout(timer);
       }, 200);
+    },
+    // 获取dataList数据
+    getData: function() {
+      window.ajax(
+        "GET",
+        "/query/home",
+        {
+          offset: this.dataList.length,
+          amount: this.pageAmount // 每次获取的数据数量
+        },
+        xmlHttp => {
+          // 当拉取的数据不足时便取消滚动拉去数据
+          if (JSON.parse(xmlHttp.responseText).length < this.pageAmount) {
+            window.removeEventListener("scroll", this.scrollEvent);
+          }
+          // 将新获取的数据拼接在原有数据之后
+          this.dataList = this.dataList.concat(
+            JSON.parse(xmlHttp.responseText)
+          );
+          // 绑定尺寸调整侦听事件
+          this.resizeEvent();
+        },
+        xmlHttp => {
+          console.error("Query for home list failed!");
+        }
+      );
+    },
+    // 卡片点击的事件驱动函数，其中两个参数分别为：卡片的类型和资源的title值
+    clickEvent(category, title) {
+      if (+category === 1) {
+        // 如果点击的为音乐music卡片
+        // 音乐卡片的特殊处理
+        console.log("点击了音乐卡片");
+        return;
+      }
+      category = ["note", "", "movie", "essay"][+category];
+      // 如果点击的不是音乐卡片则跳转页面至相应内容页
+      window.location.href =
+        window.location.origin + "/" + category + ".html?title=" + title;
+    },
+    // 当滚动至盒子底部时拉取dataList数据
+    scrollEvent: function() {
+      window.removeEventListener("scroll", this.scrollEvent);
+
+      let timer = setTimeout(() => {
+        if (
+          this.$refs.content.offsetTop + this.$refs.content.clientHeight <=
+          (document.documentElement.scrollTop ||
+            window.pageYOffset ||
+            document.body.scrollTop) +
+            window.innerHeight
+        ) {
+          this.getData();
+        }
+        window.addEventListener("scroll", this.scrollEvent);
+      }, 300);
     }
   },
   mounted() {
-    // 绑定尺寸调整侦听事件
-    this.resizeEvent();
+    // 初始化dataList
+    this.getData();
+    window.addEventListener("scroll", this.scrollEvent);
   }
 };
 </script>
@@ -107,15 +159,11 @@ div.content div.card {
 
 div.content div.card div.picture {
   display: flex;
-  width: 100%;
+  width: 110%;
   height: 250px;
   align-items: center;
   justify-content: center;
-}
-
-div.content div.card div.picture img {
-  width: auto;
-  height: 110%;
+  transform: translateX(-5%);
   transition: all 0.5s ease;
 }
 
@@ -126,7 +174,7 @@ div.content div.card div.animation {
   padding: 10px 10px;
   left: 0;
   top: 250px;
-  background-color: #ddd;
+  background-color: rgb(66, 63, 63);
   box-sizing: content-box;
   transition: all 0.5s ease;
 }
@@ -139,7 +187,7 @@ div.content div.card div.animation p.title {
   font-weight: bold;
   font-family: "Bahnschrift SemiBold", "Consolas", "Arial Black",
     "Microsoft YaHei";
-  color: #555;
+  color: #999;
   /* 单行显示标题内容，超出字符用省略号表示 */
   overflow: hidden;
   text-overflow: ellipsis;
@@ -154,7 +202,7 @@ div.content div.card div.animation div.info {
   font-weight: normal;
   font-family: "Bahnschrift SemiBold", "Consolas", "Arial Black",
     "Microsoft YaHei";
-  color: #777;
+  color: #aaa;
 }
 
 div.content div.card div.animation div.info span.category {
@@ -172,7 +220,7 @@ div.content div.card div.animation p.description {
   font-size: 16px;
   font-family: "Bahnschrift", "Calibri", "STKaiti", "STFangsong",
     "Microsoft YaHei";
-  color: #777;
+  color: #bbb;
   text-indent: 2em;
   /* 超出盒子部分的内容用省略号显示 */
   overflow: hidden;
@@ -182,8 +230,9 @@ div.content div.card div.animation p.description {
   -webkit-box-orient: vertical;
 }
 
-div.content div.card:hover div.picture img {
-  height: 100%;
+div.content div.card:hover div.picture {
+  transform: translateX(0);
+  width: 100%;
 }
 
 div.content div.card:hover div.animation {
