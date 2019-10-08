@@ -19,6 +19,16 @@ module.exports = function addLog(request, type, title = 'index') {
   let logFile = logDate.getFullYear().toString().concat((logDate.getMonth() + 1), logDate.getDate());
   switch (+type) {
     case 0:
+      // 访问主页页面的记录
+      fs.writeFile('./log/home/' + logFile + '.txt', pingAct, {
+        flag: 'a'
+      }, (err) => {
+        if (err) {
+          console.log('One index request hasn\'t been recorded!');
+        }
+      })
+      break;
+    case 1:
       // 访问随笔页面的记录
       fs.writeFile('./log/note/' + logFile + '.txt', pingAct, {
         flag: 'a'
@@ -28,7 +38,7 @@ module.exports = function addLog(request, type, title = 'index') {
         }
       })
       break;
-    case 1:
+    case 2:
       // 访问音乐页面的记录
       fs.writeFile('./log/music/' + logFile + '.txt', pingAct, {
         flag: 'a'
@@ -38,7 +48,7 @@ module.exports = function addLog(request, type, title = 'index') {
         }
       })
       break;
-    case 2:
+    case 3:
       // 访问电影页面的记录
       fs.writeFile('./log/movie/' + logFile + '.txt', pingAct, {
         flag: 'a'
@@ -48,7 +58,7 @@ module.exports = function addLog(request, type, title = 'index') {
         }
       })
       break;
-    case 3:
+    case 4:
       // 访问文章页面的记录
       fs.writeFile('./log/essay/' + logFile + '.txt', pingAct, {
         flag: 'a'
@@ -59,12 +69,12 @@ module.exports = function addLog(request, type, title = 'index') {
       })
       break;
     default:
-      // 访问首页的记录
-      fs.writeFile('./log/index/' + logFile + '.txt', pingAct, {
+      // 访问404页面的记录
+      fs.writeFile('./log/error/' + logFile + '.txt', pingAct, {
         flag: 'a'
       }, (err) => {
         if (err) {
-          console.log('One index request hasn\'t been recorded!');
+          console.log('One error request hasn\'t been recorded!');
         }
       })
   }

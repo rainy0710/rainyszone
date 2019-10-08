@@ -4,6 +4,7 @@ const express = require('express');
 const index = require('./src/route/node/index.js');
 const public = require('./src/route/node/public.js');
 const query = require('./src/route/node/query.js');
+const failed = require('./src/route/node/failed.js');
 
 // 创建HTTP服务器
 const app = express();
@@ -19,6 +20,9 @@ app.use('/query', query);
 
 // 入口文件的路由
 app.use(index);
+
+// 404文件路由
+app.use(failed);
 
 // 启动HTTP服务
 app.listen(80, () => {

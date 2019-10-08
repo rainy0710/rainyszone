@@ -15,7 +15,7 @@
 * movie: Sharing movies and give personal opinion.
 * essay: Sharing nice essay.
 
-## features
+## Features
 
 * Support PC and mobile login.
 * Use
@@ -23,7 +23,7 @@
   - Model Layer: MongoDB
   - Controller: Node.js
 
-## claim
+## Claim
 
 * The media resource on this site is only used to share and study.
 * Don't make use for other commercial purpose!

@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const addLog = require('../../lib/addLog.js');
-const failed = require('./failed.js');
 const template = require('art-template');
 
 let router = express.Router();
@@ -25,12 +24,12 @@ router.use('/note.html', (req, res, next) => {
       res.writeHeader(200, { 'Content-type': 'text/html;utf-8' });
       res.end(ret);
       // 记录访问日志
-      addLog(req, 0, title);
+      addLog(req, 1, title);
     })
   } else {
     next();
   }
-}, failed);
+});
 
 // 音乐播放上报
 router.use('/music.html', (req, res, next) => {
@@ -38,11 +37,11 @@ router.use('/music.html', (req, res, next) => {
   let title = unescape(req.query.title);
   if (title !== 'undefined') {
     res.end('Music report success!');
-    addLog(req, 1, title);
+    addLog(req, 2, title);
   } else {
     next();
   }
-}, failed);
+});
 
 // 请求电影页面
 router.use('/movie.html', (req, res, next) => {
@@ -62,16 +61,16 @@ router.use('/movie.html', (req, res, next) => {
       res.writeHeader(200, { 'Content-type': 'text/html;utf-8' });
       res.end(ret);
       // 记录访问日志
-      addLog(req, 2, title);
+      addLog(req, 3, title);
     })
   } else {
     next();
   }
-}, failed);
+});
 
 // 请求文章页面
 router.use('/essay.html', (req, res, next) => {
-  // 获取电影名称
+  // 获取文章名称
   let title = unescape(req.query.title);
   if (title !== 'undefined') {
     fs.readFile(path.join(__dirname, '../../entry/essay.html'), (err, data) => {
@@ -87,18 +86,25 @@ router.use('/essay.html', (req, res, next) => {
       res.writeHeader(200, { 'Content-type': 'text/html;utf-8' });
       res.end(ret);
       // 记录访问日志
-      addLog(req, 3, title);
+      addLog(req, 4, title);
     })
   } else {
     next();
   }
-}, failed);
+});
+
+router.use('/index.html', getHome)
 
 // 请求首页
-router.use('/', queryIndex)
-router.use('/index.html', queryIndex, failed);
+router.use('/', (req, res, next) => {
+  if (req.path === '/') {
+    getHome(req, res, next);
+    return;
+  }
+  next();
+})
 
-function queryIndex(req, res, next) {
+function getHome(req, res, next) {
   fs.readFile(path.join(__dirname, '../../entry/index.html'), (err, data) => {
     if (err) {
       next();
@@ -108,7 +114,7 @@ function queryIndex(req, res, next) {
     res.writeHeader(200, { 'Content-type': 'text/html;utf-8' });
     res.end(data);
     // 记录访问日志
-    addLog(req);
+    addLog(req, 0);
   })
 }
 

@@ -4,7 +4,7 @@ const express = require('express');
 const dbObject = require('../../lib/dbObject.js');
 
 let router = express.Router();
-let dbLicense = fs.readFileSync(path.join(__dirname, '../../../license'));
+let dbLicense = fs.readFileSync(path.join(__dirname, '../../../license')).toString();
 let database = new dbObject('rainyszone', dbLicense);
 
 router.use((req, res) => {

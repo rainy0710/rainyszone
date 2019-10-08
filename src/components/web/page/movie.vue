@@ -94,6 +94,12 @@ export default {
       },
       xmlHttp => {
         this.dataObj = JSON.parse(xmlHttp.responseText);
+        // 判断是否有有效数据返回
+        if (!this.dataObj) {
+          window.location.href =
+            window.location.origin + "/error.html?title=" + title;
+          return;
+        }
         this.region = this.dataObj.region.join("，");
         this.type = this.dataObj.type.join("，");
         this.time = new Date(this.dataObj.time).getFullYear();
